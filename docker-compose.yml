@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./databases/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+    environment:
+      - POSTGRES_USER=skywalker
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5433:5432
+
+  customer-service:
+    image: customer-service
+    container_name: customer-service
+    build:
+      context: ./bl-customer
+    depends_on:
+      - billing-service
+      - db
+    env_file:
+      - ./env/customer.env
+    ports:
+      - 3001:3001
+    restart: on-failure
+
+  billing-service:
+    image: billing-service
+    container_name: billing-service
+    build:
+      context: ./bl-billing
+    depends_on:
+      - db
+    env_file:
+      - ./env/billing.env
+    ports:
+      - 3002:3002
+    restart: on-failure
+
+volumes:
+  pgdata:
