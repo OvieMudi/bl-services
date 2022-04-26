@@ -1,0 +1,6 @@
+[submodule "bl-customer"]
+	path = bl-customer
+	url = https://github.com/OvieMudi/bl-customer.git
+[submodule "bl-billing"]
+	path = bl-billing
+	url = https://github.com/OvieMudi/bl-billing.git
