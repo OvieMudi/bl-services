@@ -4,3 +4,6 @@
 [submodule "bl-billing"]
 	path = bl-billing
 	url = https://github.com/OvieMudi/bl-billing.git
+[submodule "bl-worker"]
+	path = bl-worker
+	url = https://github.com/OvieMudi/bl-worker.git

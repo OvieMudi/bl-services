@@ -1,6 +1,23 @@
 version: '3'
 
 services:
+  rabbitmq:
+    hostname: rabbitmq
+    image: rabbitmq:alpine
+    command: rabbitmq-server
+    container_name: rabbitmq
+    ports:
+      - 5673:5672
+      - 15673:15672
+    healthcheck:
+      test: ['CMD', 'nc', '-z', 'localhost', '5672']
+      interval: 5s
+      timeout: 15s
+      retries: 1
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
   db:
     image: postgres
     volumes:
@@ -19,8 +36,10 @@ services:
     build:
       context: ./bl-customer
     depends_on:
-      - billing-service
-      - db
+      billing-service:
+          condition: service_started
+      db:
+          condition: service_started
     env_file:
       - ./env/customer.env
     ports:
@@ -33,11 +52,28 @@ services:
     build:
       context: ./bl-billing
     depends_on:
-      - db
+      rabbitmq:
+          condition: service_healthy
+      db: 
+          condition: service_started
     env_file:
       - ./env/billing.env
     ports:
       - 3002:3002
+    restart: on-failure
+
+  billing-worker-service:
+    image: billing-worker-service
+    container_name: billing-worker-service
+    build:
+      context: ./bl-worker
+    depends_on:
+      rabbitmq:
+          condition: service_healthy
+      billing-service:
+          condition: service_started
+    env_file:
+      - ./env/billing-worker.env
     restart: on-failure
 
 volumes:
