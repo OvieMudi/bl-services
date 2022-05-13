@@ -24,7 +24,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Dependencies
 The project is an aggregation of three (independent) git repos:
 
-- Customer Service: https://github.com/OvieMudi/bl-services
+- Customer Service: https://github.com/OvieMudi/bl-customer
 - Billing Service: https://github.com/OvieMudi/bl-billing
 - Billing Worker Service: https://github.com/OvieMudi/bl-worker
 
